@@ -8,10 +8,10 @@ import (
 
 // EmailConnection结构体
 type EmailConnection struct {
-	Server   string // smtp服务器地址
-	Port     int    // smtp服务器端口
-	Username string // smtp登录名
-	Password string // smtp密码，可以是授权码
+	Server   string `json:"server"`    // smtp服务器地址
+	Port     int    `json:"port"`      // smtp服务器端口
+	Username string `json:"user-name"` // smtp登录名
+	Password string `json:"password"`  // smtp密码，可以是授权码
 }
 
 /*
