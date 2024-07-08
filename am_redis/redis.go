@@ -18,10 +18,10 @@ var (
 
 // redis连接结构体
 type RedisConn struct {
-	Addr     string
-	Port     int
-	Password string
-	DB       int
+	Addr     string `json:"addr"`
+	Port     int    `json:"port"`
+	Password string `json:"password"`
+	DB       int    `json:"db"`
 }
 
 // redis连接参数默认值
