@@ -71,6 +71,12 @@ type TokenClaims struct {
 	jwt.StandardClaims        // standard claims，无需用户设定
 }
 
+// token config
+type TokenConfig struct {
+	Issuer string `json:"issuer"`
+	Secret string `json:"secret"`
+}
+
 /*
 * PRIVATE
 * 查验redis储存情况
