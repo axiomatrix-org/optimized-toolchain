@@ -46,7 +46,7 @@ const (
 )
 
 // 身份字段转换权限等级数字
-func claimToRole(claim string) int {
+func ClaimToRole(claim string) int {
 	switch claim {
 	case "root":
 		return ROOTROLE
@@ -192,12 +192,12 @@ func ParseToken(token string, roleRequired int, secret string) (*TokenClaims, er
 		}
 
 		// 验证权限合法性
-		if claimToRole(claims.Role) >= roleRequired { // 如果提供的token权限验证大于所需权限，初步判断通过
-			if roleRequired == 1 && claimToRole(claims.Role) == 2 { // user权限无权新增用户
+		if ClaimToRole(claims.Role) >= roleRequired { // 如果提供的token权限验证大于所需权限，初步判断通过
+			if roleRequired == 1 && ClaimToRole(claims.Role) == 2 { // user权限无权新增用户
 				return nil, InvalidRoleError
 			}
 
-			if claimToRole(claims.Role) == 1 { // temp权限仅用于注册和重设密码临时使用，一经使用立即灭活
+			if ClaimToRole(claims.Role) == 1 { // temp权限仅用于注册和重设密码临时使用，一经使用立即灭活
 				_, err := Kickoff(token)
 				if err != nil {
 					return nil, err
@@ -252,7 +252,7 @@ func JWTAuthMiddleware(role string, secret string) func(c *gin.Context) {
 		}
 
 		// 开始认证
-		claims, err := ParseToken(parts[1], claimToRole(role), secret)
+		claims, err := ParseToken(parts[1], ClaimToRole(role), secret)
 		if err != nil {
 			if errors.Is(err, ExpiredButCanSaveError) { // 如果还可以救一救
 				tokenClaims := TokenClaims{
