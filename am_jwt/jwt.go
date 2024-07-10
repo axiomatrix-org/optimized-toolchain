@@ -68,6 +68,7 @@ type TokenClaims struct {
 	Exp                int    // token过期时间，以秒计数
 	Issuer             string // 签发人
 	SECRET             string // token secret
+	PUBLIC             string // token public
 	jwt.StandardClaims        // standard claims，无需用户设定
 }
 
@@ -117,11 +118,12 @@ func GenToken(claims *TokenClaims) (string, error) {
 		Issuer:    claims.Issuer,                                                  // 签发人
 	}
 
-	// 解析私鑰
+	// 解析並刪除私鑰
 	privKey, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(claims.SECRET))
 	if err != nil {
 		return "", err
 	}
+	tokenClaims.SECRET = ""
 
 	// 生成token字串
 	tokenGenerator := jwt.NewWithClaims(jwt.SigningMethodRS256, tokenClaims)
