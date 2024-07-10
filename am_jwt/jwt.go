@@ -117,9 +117,15 @@ func GenToken(claims *TokenClaims) (string, error) {
 		Issuer:    claims.Issuer,                                                  // 签发人
 	}
 
+	// 解析私鑰
+	privKey, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(claims.SECRET))
+	if err != nil {
+		return "", err
+	}
+
 	// 生成token字串
 	tokenGenerator := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims)
-	token, err := tokenGenerator.SignedString([]byte(claims.SECRET)) // 生成token
+	token, err := tokenGenerator.SignedString(privKey) // 生成token
 	if err != nil {
 		return "", err
 	}
@@ -147,9 +153,15 @@ func GenToken(claims *TokenClaims) (string, error) {
 * 3. secret string：解码密钥
  */
 func ParseToken(token string, roleRequired int, secret string) (*TokenClaims, error) {
+	// 解析公鑰
+	pem, err := jwt.ParseRSAPublicKeyFromPEM([]byte(secret))
+	if err != nil {
+		return nil, err
+	}
+
 	// 解析token
 	result, err := jwt.ParseWithClaims(token, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secret), nil
+		return pem, nil
 	})
 
 	// 解析出现问题
@@ -195,7 +207,7 @@ func ParseToken(token string, roleRequired int, secret string) (*TokenClaims, er
 		if ClaimToRole(claims.Role) >= roleRequired { // 如果提供的token权限验证大于所需权限，初步判断通过
 			if roleRequired == 1 && ClaimToRole(claims.Role) == 2 { // user权限无权新增用户
 				return nil, InvalidRoleError
-			}
+			} // user不允許操作temp
 
 			if ClaimToRole(claims.Role) == 1 { // temp权限仅用于注册和重设密码临时使用，一经使用立即灭活
 				_, err := Kickoff(token)
