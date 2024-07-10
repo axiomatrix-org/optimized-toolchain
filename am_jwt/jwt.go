@@ -124,7 +124,7 @@ func GenToken(claims *TokenClaims) (string, error) {
 	}
 
 	// 生成token字串
-	tokenGenerator := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims)
+	tokenGenerator := jwt.NewWithClaims(jwt.SigningMethodRS256, tokenClaims)
 	token, err := tokenGenerator.SignedString(privKey) // 生成token
 	if err != nil {
 		return "", err
