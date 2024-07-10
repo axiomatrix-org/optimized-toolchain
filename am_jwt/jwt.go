@@ -75,7 +75,6 @@ type TokenClaims struct {
 // token config
 type TokenConfig struct {
 	Issuer string `json:"issuer"`
-	Secret string `json:"secret"`
 }
 
 /*
